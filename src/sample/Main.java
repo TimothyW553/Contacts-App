@@ -20,24 +20,38 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class Main extends Application {
 
-    private TableView<Person> table = new TableView<Person>();
+    private TableView<Person> table = new TableView<>();
     private final ObservableList<Person> data = FXCollections.observableArrayList();
     final HBox hb = new HBox();
 
+    private static String readFile(String fileName) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(fileName));
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                line = br.readLine();
+            }
+            return sb.toString();
+        } finally {
+            br.close();
+        }
+    }
+
     private static void writeUsingBufferedWriter(String data, int noOfLines) {
-        File file = new File("C:\\Users\\Timothy Wang\\IdeaProjects\\Contacts_App\\src\\sample\\ContactData");
+        File file = new File("C:\\Users\\Timothy Wang\\IdeaProjects\\Contacts_App\\src\\sample\\ContactData.csv");
         FileWriter fr = null;
         BufferedWriter br = null;
         String dataWithNewLine = data + System.getProperty("line.separator");
         try{
-            fr = new FileWriter(file);
+            fr = new FileWriter(file, true);
             br = new BufferedWriter(fr);
             for(int i = noOfLines; i > 0; i--){
                 br.write(dataWithNewLine);
@@ -172,6 +186,19 @@ public class Main extends Application {
         addAddress.setPromptText("Address");
 
         final Button addButton = new Button("Add");
+
+        try {
+            String contacts = readFile("C:\\Users\\Timothy Wang\\IdeaProjects\\Contacts_App\\src\\sample\\ContactData.csv");
+            System.out.println(contacts);
+            String[] arr = contacts.split("\n");
+            for(int i = 0; i < arr.length; i++) {
+                String[] details = arr[i].split(", ");
+                data.add(new Person(details[0], details[1], details[2], details[3], details[4]));
+            }
+
+        } catch (IOException b) {
+            b.printStackTrace();
+        }
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
@@ -181,11 +208,12 @@ public class Main extends Application {
                         addEmail.getText(),
                         addPhoneNumber.getText(),
                         addAddress.getText()));
-                String personInfo = "{" + addFirstName.getText() +
-                                    ", " + addLastName.getText() +
-                                    ", " + addEmail.getText() +
-                                    ", " + addPhoneNumber.getText() +
-                                    ", " + addAddress.getText() + "}";
+                String personInfo = addFirstName.getText() +
+                             ", " + addLastName.getText() +
+                             ", " + addEmail.getText() +
+                             ", " + addPhoneNumber.getText() +
+                             ", " + addAddress.getText();
+                // FirstName, LastName, Email, PhoneNumber, Address
                 writeUsingBufferedWriter(personInfo, 1);
                 System.out.println(personInfo);
                 addFirstName.clear();

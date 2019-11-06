@@ -80,7 +80,7 @@ public class Main extends Application {
         stage.setHeight(720);
 
         final Label label = new Label("Contacts App");
-        label.setFont(new Font("Arial", 20));
+        label.setFont(new Font("Consolas", 20));
 
         table.setEditable(true);
 
@@ -96,6 +96,7 @@ public class Main extends Application {
                         ((Person) t.getTableView().getItems().get(
                                 t.getTablePosition().getRow())
                         ).setFirstName(t.getNewValue());
+                        System.out.println(t.getTablePosition().getRow());
                     }
                 }
         );
@@ -189,7 +190,6 @@ public class Main extends Application {
 
         try {
             String contacts = readFile("C:\\Users\\Timothy Wang\\IdeaProjects\\Contacts_App\\src\\sample\\ContactData.csv");
-            System.out.println(contacts);
             String[] arr = contacts.split("\n");
             for(int i = 0; i < arr.length; i++) {
                 String[] details = arr[i].split(", ");
@@ -199,29 +199,21 @@ public class Main extends Application {
         } catch (IOException b) {
             b.printStackTrace();
         }
-        addButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                data.add(new Person(
-                        addFirstName.getText(),
-                        addLastName.getText(),
-                        addEmail.getText(),
-                        addPhoneNumber.getText(),
-                        addAddress.getText()));
-                String personInfo = addFirstName.getText() +
-                             ", " + addLastName.getText() +
-                             ", " + addEmail.getText() +
-                             ", " + addPhoneNumber.getText() +
-                             ", " + addAddress.getText();
-                // FirstName, LastName, Email, PhoneNumber, Address
-                writeUsingBufferedWriter(personInfo, 1);
-                System.out.println(personInfo);
-                addFirstName.clear();
-                addLastName.clear();
-                addEmail.clear();
-                addPhoneNumber.clear();
-                addAddress.clear();
-            }
+        addButton.setOnAction(e -> {
+            String curFN = addFirstName.getText();
+            String curLN = addLastName.getText();
+            String curE = addEmail.getText();
+            String curPN = addPhoneNumber.getText();
+            String curAD = addAddress.getText();
+            data.add(new Person(curFN, curLN, curE, curPN, curAD));
+            String personInfo = curFN + ", " + curLN + ", " + curE + ", " + curPN + ", " + curAD;
+            // FirstName, LastName, Email, PhoneNumber, Address
+            writeUsingBufferedWriter(personInfo, 1);
+            addFirstName.clear();
+            addLastName.clear();
+            addEmail.clear();
+            addPhoneNumber.clear();
+            addAddress.clear();
         });
 
         hb.getChildren().addAll(addFirstName, addLastName, addEmail, addPhoneNumber, addAddress,addButton);

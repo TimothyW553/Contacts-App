@@ -86,83 +86,49 @@ public class Main extends Application {
 
         TableColumn firstNameCol = new TableColumn("First Name");
         firstNameCol.setMinWidth(200);
-        firstNameCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("firstName"));
+        firstNameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("firstName"));
         firstNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
         firstNameCol.setOnEditCommit(
-                new EventHandler<CellEditEvent<Person, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<Person, String> t) {
-                        ((Person) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setFirstName(t.getNewValue());
-                        System.out.println(t.getTablePosition().getRow());
-                    }
-                }
+                (EventHandler<CellEditEvent<Person, String>>) t -> t.getTableView().getItems().get(
+                            t.getTablePosition().getRow()).setFirstName(t.getNewValue())
         );
 
         TableColumn lastNameCol = new TableColumn("Last Name");
         lastNameCol.setMinWidth(200);
-        lastNameCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("lastName"));
+        lastNameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("lastName"));
         lastNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
         lastNameCol.setOnEditCommit(
-                new EventHandler<CellEditEvent<Person, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<Person, String> t) {
-                        ((Person) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setLastName(t.getNewValue());
-                    }
-                }
+                (EventHandler<CellEditEvent<Person, String>>) t -> t.getTableView().getItems().get(
+                        t.getTablePosition().getRow()).setLastName(t.getNewValue())
         );
 
         TableColumn emailCol = new TableColumn("Email");
         emailCol.setMinWidth(300);
-        emailCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("email"));
+        emailCol.setCellValueFactory(new PropertyValueFactory<Person, String>("email"));
         emailCol.setCellFactory(TextFieldTableCell.forTableColumn());
         emailCol.setOnEditCommit(
-                new EventHandler<CellEditEvent<Person, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<Person, String> t) {
-                        ((Person) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setEmail(t.getNewValue());
-                    }
-                }
+                (EventHandler<CellEditEvent<Person, String>>) t -> t.getTableView().getItems().get(
+                        t.getTablePosition().getRow()).setEmail(t.getNewValue())
         );
 
         TableColumn phoneCol = new TableColumn("Phone Number");
         phoneCol.setMinWidth(300);
-        phoneCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("phoneNumber"));
+        phoneCol.setCellValueFactory(new PropertyValueFactory<Person, String>("phoneNumber"));
         phoneCol.setCellFactory(TextFieldTableCell.forTableColumn());
         phoneCol.setOnEditCommit(
-                new EventHandler<CellEditEvent<Person, String>>() {
-                    @Override
-                    public void handle(CellEditEvent<Person, String> t) {
-                        ((Person) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setPhoneNumber(t.getNewValue());
-                    }
-                }
+                (EventHandler<CellEditEvent<Person, String>>) t -> t.getTableView().getItems().get(
+                        t.getTablePosition().getRow()).setPhoneNumber(t.getNewValue())
         );
 
         TableColumn addressCol = new TableColumn("Address");
         addressCol.setMinWidth(240);
-        addressCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("Address"));
+        addressCol.setCellValueFactory(new PropertyValueFactory<Person, String>("Address"));
         addressCol.setCellFactory(TextFieldTableCell.forTableColumn());
         addressCol.setOnEditCommit(
-                new EventHandler<CellEditEvent<Person, String>>() {
-                    public void handle(CellEditEvent<Person, String> t) {
-                        ((Person) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setAddress(t.getNewValue());
-                    }
-                }
+                (EventHandler<CellEditEvent<Person, String>>) t -> t.getTableView().getItems().get(
+                        t.getTablePosition().getRow()).setAddress(t.getNewValue())
         );
+
         table.setItems(data);
         table.getColumns().addAll(firstNameCol, lastNameCol, emailCol, phoneCol, addressCol);
 
@@ -188,6 +154,9 @@ public class Main extends Application {
 
         final Button addButton = new Button("Add");
 
+        final Button deleteButton = new Button("Delete");
+
+
         try {
             String contacts = readFile("C:\\Users\\Timothy Wang\\IdeaProjects\\Contacts_App\\src\\sample\\ContactData.csv");
             String[] arr = contacts.split("\n");
@@ -195,10 +164,15 @@ public class Main extends Application {
                 String[] details = arr[i].split(", ");
                 data.add(new Person(details[0], details[1], details[2], details[3], details[4]));
             }
-
         } catch (IOException b) {
             b.printStackTrace();
         }
+
+        deleteButton.setOnAction(e -> {
+            Person selectedItem = table.getSelectionModel().getSelectedItem();
+            table.getItems().remove(selectedItem);
+        });
+
         addButton.setOnAction(e -> {
             String curFN = addFirstName.getText();
             String curLN = addLastName.getText();
@@ -216,7 +190,7 @@ public class Main extends Application {
             addAddress.clear();
         });
 
-        hb.getChildren().addAll(addFirstName, addLastName, addEmail, addPhoneNumber, addAddress,addButton);
+        hb.getChildren().addAll(addFirstName, addLastName, addEmail, addPhoneNumber, addAddress, addButton, deleteButton);
         hb.setSpacing(5);
 
         final VBox vbox = new VBox();

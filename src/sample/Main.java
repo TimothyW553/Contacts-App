@@ -1,3 +1,12 @@
+/*
+ * Group Members: Timothy Wang and Jim Liu
+ * Project Name: Contacts App
+ * Work Cited Links:
+ *  > Tableview: https://docs.oracle.com/javafx/2/ui_controls/table-view.htm
+ *  > Row delete: https://stackoverflow.com/questions/34857007/how-to-delete-row-from-table-column-javafx
+ *  > Reading and Writing to CSV file: https://stackabuse.com/reading-and-writing-csvs-in-java/
+ *  > Event handling: https://code.makery.ch/blog/javafx-8-event-handling-examples/
+ */
 package sample;
 
 import javafx.application.Application;

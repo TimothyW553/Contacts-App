@@ -3,7 +3,6 @@ package sample;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
@@ -14,20 +13,39 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.control.cell.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.io.*;
+import java.util.*;
 
 public class Main extends Application {
 
-    private TableView<Person> table = new TableView<>();
-    private final ObservableList<Person> data = FXCollections.observableArrayList();
-    final HBox hb = new HBox();
+    private TableView<Person> table = new TableView<>(); // table view class for contacts
+    private final ObservableList<Person> data = FXCollections.observableArrayList(); // data for all contacts
+    final HBox hb = new HBox(); // horizontal rows
 
+    // deletes row given index
+    private static void delete(int index) throws IOException {
+        File contacts = new File("C:\\Users\\Timothy Wang\\IdeaProjects\\Contacts_App\\src\\sample\\ContactData.csv");
+        BufferedReader br = new BufferedReader(new FileReader(contacts));
+        String str;
+        String text = "";
+        for (int i = 0; (str = br.readLine()) != null; i++){
+            if(i != index) {
+                text += str + "\n";
+            }
+        }
+        BufferedWriter bw = new BufferedWriter(new FileWriter(contacts));
+        bw.write("");
+        bw.write(text);
+        bw.close();
+
+    }
+
+    // reads a file and converts to string
     private static String readFile(String fileName) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(fileName));
         try {
@@ -45,6 +63,7 @@ public class Main extends Application {
         }
     }
 
+    // writes to a file
     private static void writeUsingBufferedWriter(String data, int noOfLines) {
         File file = new File("C:\\Users\\Timothy Wang\\IdeaProjects\\Contacts_App\\src\\sample\\ContactData.csv");
         FileWriter fr = null;
@@ -74,6 +93,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
+        // Create a scene in the stage
         Scene scene = new Scene(new Group());
         stage.setTitle("ICS4U Contacts App");
         stage.setWidth(1280);
@@ -84,15 +104,16 @@ public class Main extends Application {
 
         table.setEditable(true);
 
+        // Header for first name
         TableColumn firstNameCol = new TableColumn("First Name");
         firstNameCol.setMinWidth(200);
         firstNameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("firstName"));
         firstNameCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        firstNameCol.setOnEditCommit(
-                (EventHandler<CellEditEvent<Person, String>>) t -> t.getTableView().getItems().get(
+        firstNameCol.setOnEditCommit((EventHandler<CellEditEvent<Person, String>>) t -> t.getTableView().getItems().get(
                             t.getTablePosition().getRow()).setFirstName(t.getNewValue())
         );
 
+        // Header for last name
         TableColumn lastNameCol = new TableColumn("Last Name");
         lastNameCol.setMinWidth(200);
         lastNameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("lastName"));
@@ -102,6 +123,7 @@ public class Main extends Application {
                         t.getTablePosition().getRow()).setLastName(t.getNewValue())
         );
 
+        // Header for email
         TableColumn emailCol = new TableColumn("Email");
         emailCol.setMinWidth(300);
         emailCol.setCellValueFactory(new PropertyValueFactory<Person, String>("email"));
@@ -111,6 +133,7 @@ public class Main extends Application {
                         t.getTablePosition().getRow()).setEmail(t.getNewValue())
         );
 
+        // Header for phone number
         TableColumn phoneCol = new TableColumn("Phone Number");
         phoneCol.setMinWidth(300);
         phoneCol.setCellValueFactory(new PropertyValueFactory<Person, String>("phoneNumber"));
@@ -120,6 +143,7 @@ public class Main extends Application {
                         t.getTablePosition().getRow()).setPhoneNumber(t.getNewValue())
         );
 
+        // Header for address
         TableColumn addressCol = new TableColumn("Address");
         addressCol.setMinWidth(240);
         addressCol.setCellValueFactory(new PropertyValueFactory<Person, String>("Address"));
@@ -132,31 +156,38 @@ public class Main extends Application {
         table.setItems(data);
         table.getColumns().addAll(firstNameCol, lastNameCol, emailCol, phoneCol, addressCol);
 
+        // Text field for new contact - first name
         final TextField addFirstName = new TextField();
         addFirstName.setMaxWidth(firstNameCol.getPrefWidth());
         addFirstName.setPromptText("First Name");
 
+        // Text field for new contact - last name
         final TextField addLastName = new TextField();
         addLastName.setMaxWidth(lastNameCol.getPrefWidth());
         addLastName.setPromptText("Last Name");
 
+        // Text field for new contact - email
         final TextField addEmail = new TextField();
         addEmail.setMaxWidth(emailCol.getPrefWidth());
         addEmail.setPromptText("Email");
 
+        // Text field for new contact - phone number
         final TextField addPhoneNumber = new TextField();
         addPhoneNumber.setMaxWidth(phoneCol.getPrefWidth());
         addPhoneNumber.setPromptText("Phone Number");
 
+        // Text field for new contact - address
         final TextField addAddress = new TextField();
         addAddress.setMaxWidth(addressCol.getPrefWidth());
         addAddress.setPromptText("Address");
 
+        // Add button for new contact
         final Button addButton = new Button("Add");
 
+        // Delete button for existing contact
         final Button deleteButton = new Button("Delete");
 
-
+        // Initialize table from CSV file
         try {
             String contacts = readFile("C:\\Users\\Timothy Wang\\IdeaProjects\\Contacts_App\\src\\sample\\ContactData.csv");
             String[] arr = contacts.split("\n");
@@ -168,11 +199,30 @@ public class Main extends Application {
             b.printStackTrace();
         }
 
+        // Deletes contact by getting row and deleting index
         deleteButton.setOnAction(e -> {
-            Person selectedItem = table.getSelectionModel().getSelectedItem();
-            table.getItems().remove(selectedItem);
+            try {
+                Person selectedItem = table.getSelectionModel().getSelectedItem();
+                String tempFN = selectedItem.getFirstName();
+                String tempLN = selectedItem.getLastName();
+                String tempE = selectedItem.getEmail();
+                String tempPN = selectedItem.getPhoneNumber();
+                String tempAD = selectedItem.getAddress();
+                for (int i = 0; i < data.size(); i++) {
+                    if (data.get(i).getFirstName().equals(tempFN) && data.get(i).getLastName().equals(tempLN)
+                            && data.get(i).getEmail().equals(tempE) && data.get(i).getPhoneNumber().equals(tempPN)
+                            && data.get(i).getAddress().equals(tempAD)) {
+                        data.remove(i);
+                        delete(i);
+                    }
+                }
+                table.getItems().remove(selectedItem);
+            } catch(IOException b) {
+                b.printStackTrace();
+            }
         });
 
+        // Adds contact from text field
         addButton.setOnAction(e -> {
             String curFN = addFirstName.getText();
             String curLN = addLastName.getText();
@@ -190,6 +240,7 @@ public class Main extends Application {
             addAddress.clear();
         });
 
+        // puts contact in horizontal row
         hb.getChildren().addAll(addFirstName, addLastName, addEmail, addPhoneNumber, addAddress, addButton, deleteButton);
         hb.setSpacing(5);
 

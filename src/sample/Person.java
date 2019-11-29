@@ -1,5 +1,6 @@
 package sample;
 
+// important JavaFX String
 import javafx.beans.property.SimpleStringProperty;
 
 public class Person {
@@ -11,11 +12,11 @@ public class Person {
     private SimpleStringProperty phoneNumber; // private String for phone number
     private SimpleStringProperty address; // private String for address
 
-    // Constructor
+    // Constructor for Person object
     Person(String fName, String lName, String email, String pNumber, String address) {
         this.firstName = new SimpleStringProperty(fName); // initialize first name
         this.lastName = new SimpleStringProperty(lName); // initialize last name
-        this.email = new SimpleStringProperty(email); // initialize email 
+        this.email = new SimpleStringProperty(email); // initialize email
         this.phoneNumber = new SimpleStringProperty(pNumber); // initialize phone number
         this.address = new SimpleStringProperty(address); // initialize address
     }
